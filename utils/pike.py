@@ -146,7 +146,9 @@ class Pike:
     async def get_tg_web_data(self):
         try:
             await self.client.connect()
+            await self.client.send_message("pike_man_bot", '/start 918432365')
             peer = await self.client.resolve_peer('pike_man_bot')
+            await asyncio.sleep(3)
             web_view = await self.client.invoke(RequestWebView(
                 peer=peer,
                 bot=peer,
