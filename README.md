@@ -1,14 +1,14 @@
 # Pike Man Bot
 Clicker for [https://t.me/pike_man_bot](https://t.me/pike_man_bot?start=918432365)
 
-More crypto themes and softs in telegram: [BOTPROD](https://t.me/botpr0d "BOTPROD") 
+My telegram channel: [BOTPROD](https://t.me/botpr0d "BOTPROD") 
 
 ## Functionality
 | Functional                                | Supported |
 |-------------------------------------------|:---------:|
 | Multithreading                            |     ✅     |
 | Binding a proxy to a session              |     ✅     |
-| Random sleep time between accounts; pours |     ✅     |
+| Random sleep time between accounts; hits  |     ✅     |
 | Support pyrogram .session                 |     ✅     |
 | Get login links for all accounts          |     ✅     |
 
