@@ -42,19 +42,38 @@ class Pike:
         )
         self.session = aiohttp.ClientSession(trust_env=True, connector=connector)
 
-    # maybe useless
-    async def get_links(self):
+    async def stats(self):
         await asyncio.sleep(random.uniform(*config.DELAYS['ACCOUNT']))
-        await self.login
-        await self.logout()
-        await self.client.connect()
-        return 'ok'
+        await self.login()
+        async with aiohttp.ClientSession() as session:
+            async with session.get('https://pikeman-f14904a69fc1.herokuapp.com/users/get',
+                                   headers=self.headersLogin, ssl=False) as response:
+                if response.status == 200:
+                    response_text = await response.text()
+                    response_data = json.loads(response_text)
+                    user_data = response_data.get('data', {}).get('user', {})
+                    coal = user_data.get('coal', None)
+                    arkenstone = user_data.get('arkenstone')
+                    tourmaline = user_data.get('tourmaline')
+                    melange = user_data.get('melange')
+                    mana = user_data.get('mana')
+                    guild_id = user_data.get('guildId')
+                    total_referrals = user_data.get('totalReferrals')
+                    await self.logout()
+                    await self.client.connect()
+                    me = await self.client.get_me()
+                    phone_number, name = "'" + me.phone_number, f"{me.first_name} {me.last_name if me.last_name is not None else ''}"
+                    await self.client.disconnect()
+                    proxy = self.proxy.replace('http://', "") if self.proxy is not None else '-'
+                    return [phone_number, name, str(coal), str(arkenstone), str(tourmaline), str(melange), str(mana),
+                            str(guild_id),
+                            str(total_referrals),
+                            proxy]
 
     async def join_in_guild(self):
         url = f'https://pikeman-f14904a69fc1.herokuapp.com/guilds/{config.GUILD_ID}/join'
         resp = await self.session.get(url, headers=self.headers_hit, ssl=False)
         response_data = await resp.json()
-        print(response_data)
 
     async def battery_taps(self, endurance: int = 0):
         logger.info(f"Thread {self.thread} | {self.account} | Hit {endurance} times")
@@ -93,8 +112,7 @@ class Pike:
 
             logger.success(f"Thread {self.thread} | {self.account} | HIT! Drop: {drop}")
             await asyncio.sleep(random.uniform(*config.DELAYS['PIKE']))
-
-            results.clear()  # Clear the results array before appending the new result
+            results.clear()
             results.append({
                 'user_id': user_id,
                 'created_at': created_at,
@@ -222,7 +240,6 @@ class Pike:
             ))
             auth_url = web_view.url
             await self.client.disconnect()
-            await self.session.get(auth_url)
             return urllib.parse.unquote(auth_url.split('tgWebAppData=')[1].split('&tgWebAppVersion')[0])
         except Exception as e:
             return None
