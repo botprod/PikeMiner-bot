@@ -23,7 +23,7 @@ async def start(thread: int, session_name: str, phone_number: str, proxy: [str, 
                     acc_stat = await pike.battery_taps(endurance)
                     guild_id = acc_stat[0]['guild_id']
                     logger.info(
-                        f"Thread {thread} | {account} | Arkenstone: {acc_stat[0]['arkenstone']} Tourmaline: {acc_stat[0]['tourmaline']} Melange {acc_stat[0]['melange']}")
+                        f"Thread {thread} | {account} | Arkenstone: {acc_stat[0]['arkenstone']} Tourmaline: {acc_stat[0]['tourmaline']} Melange: {acc_stat[0]['melange']}")
                     if guild_id != config.GUILD_ID:
                         await pike.join_in_guild()
                 logger.info(f"Thread {thread} | {account} | Sleep: 4 hours")
