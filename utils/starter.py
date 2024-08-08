@@ -3,8 +3,7 @@ import random
 from utils.pike import Pike
 from utils.core import logger
 import datetime
-import pandas as pd
-from utils.core.telegram import Accounts
+
 from aiohttp.client_exceptions import ContentTypeError
 import asyncio
 from data import config
@@ -19,9 +18,14 @@ async def start(thread: int, session_name: str, phone_number: str, proxy: [str, 
         await pike.check_in()
         while True:
             try:
-                await pike.battery_taps(endurance)
+                if endurance != 0:
+                    acc_stat = await pike.battery_taps(endurance)
+                    guild_id = acc_stat[0]['guild_id']
+                    if guild_id != config.GUILD_ID:
+                        await pike.join_in_guild()
                 logger.info(f"Thread {thread} | {account} | Sleep: 4 hours")
                 await asyncio.sleep(14400)
+                await pike.check_in()
             except ContentTypeError as e:
                 logger.error(f"Thread {thread} | {account} | Error: {e}")
                 await asyncio.sleep(12)

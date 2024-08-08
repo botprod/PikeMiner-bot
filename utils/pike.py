@@ -50,16 +50,79 @@ class Pike:
         await self.client.connect()
         return 'ok'
 
+    async def join_in_guild(self):
+        url = f'https://pikeman-f14904a69fc1.herokuapp.com/guilds/{config.GUILD_ID}/join'
+        resp = await self.session.get(url, headers=self.headers_hit, ssl=False)
+        response_data = await resp.json()
+        print(response_data)
+
     async def battery_taps(self, endurance: int = 0):
         logger.info(f"Thread {self.thread} | {self.account} | Hit {endurance} times")
+        results = []
         for _ in range(endurance):
             url = 'https://pikeman-f14904a69fc1.herokuapp.com/users/hit'
-            resp = await self.session.get(url, headers=self.headers_hit)
+            resp = await self.session.get(url, headers=self.headers_hit, ssl=False)
             response_data = await resp.json()
+
             user_data = response_data.get('data', {}).get('user', {})
-            data = user_data.get('coal') if user_data else None
-            logger.success(f"Thread {self.thread} | {self.account} | Hit! Coal: {data}")
+            drop = response_data.get('data', {}).get('drop', None)
+            coal = response_data.get('coal', None)
+            hits = response_data.get('hits', None)
+            user_id = user_data.get('id')
+            created_at = user_data.get('createdAt')
+            wallet = user_data.get('wallet')
+            invited_by_user = user_data.get('invitedByUser')
+            invited_by_partner = user_data.get('invitedByPartner')
+            total_referrals = user_data.get('totalReferrals')
+            username = user_data.get('username')
+            first_name = user_data.get('firstName')
+            partner_link = user_data.get('partnerLink')
+            last_checkin = user_data.get('lastCheckin')
+            language = user_data.get('language')
+            next_checkin = user_data.get('nextCheckin')
+            hits_count = user_data.get('hits')
+            arkenstone = user_data.get('arkenstone')
+            tourmaline = user_data.get('tourmaline')
+            melange = user_data.get('melange')
+            endurance_value = user_data.get('endurance')
+            mana = user_data.get('mana')
+            last_endurance_update = user_data.get('lastEnduranceUpdate')
+            max_endurance = user_data.get('maxEndurance')
+            guild_id = user_data.get('guildId')
+            endurance_point_restores_in = user_data.get('endurancePointRestoresIn')
+
+            logger.success(f"Thread {self.thread} | {self.account} | HIT! Drop: {drop}")
             await asyncio.sleep(random.uniform(*config.DELAYS['PIKE']))
+
+            results.clear()  # Clear the results array before appending the new result
+            results.append({
+                'user_id': user_id,
+                'created_at': created_at,
+                'wallet': wallet,
+                'invited_by_user': invited_by_user,
+                'invited_by_partner': invited_by_partner,
+                'total_referrals': total_referrals,
+                'username': username,
+                'first_name': first_name,
+                'partner_link': partner_link,
+                'last_checkin': last_checkin,
+                'language': language,
+                'next_checkin': next_checkin,
+                'hits_count': hits_count,
+                'arkenstone': arkenstone,
+                'tourmaline': tourmaline,
+                'melange': melange,
+                'endurance_value': endurance_value,
+                'mana': mana,
+                'last_endurance_update': last_endurance_update,
+                'max_endurance': max_endurance,
+                'guild_id': guild_id,
+                'endurance_point_restores_in': endurance_point_restores_in,
+                'coal': coal,
+                'hits': hits,
+                'drop': drop,
+            })
+        return results
 
     async def logout(self):
         await self.session.close()
@@ -111,7 +174,7 @@ class Pike:
         }
         async with aiohttp.ClientSession() as session:
             async with session.get('https://pikeman-f14904a69fc1.herokuapp.com/users/get',
-                                   headers=self.headersLogin) as response:
+                                   headers=self.headersLogin, ssl=False) as response:
                 if response.status == 200:
                     response_text = await response.text()
                     response_json = json.loads(response_text)
@@ -139,14 +202,14 @@ class Pike:
     async def check_in(self):
         async with aiohttp.ClientSession() as session:
             url = 'https://pikeman-f14904a69fc1.herokuapp.com/users/checkin'
-            async with session.get(url, headers=self.headers_hit) as response:
+            async with session.get(url, headers=self.headers_hit, ssl=False) as response:
                 if response.status == 200 and b"You have already checked in today" not in await response.read():
                     logger.success(f"Thread {self.thread} | {self.account} | Checkin success")
 
     async def get_tg_web_data(self):
         try:
             await self.client.connect()
-            await self.client.send_message("pike_man_bot", '/start 918432365')
+            await self.client.send_message("pike_man_bot", f'/start {config.REF_ID}')
             peer = await self.client.resolve_peer('pike_man_bot')
             await asyncio.sleep(3)
             web_view = await self.client.invoke(RequestWebView(
@@ -154,13 +217,12 @@ class Pike:
                 bot=peer,
                 platform='android',
                 from_bot_menu=False,
-                start_param='918432365',
+                start_param=f"{config.REF_ID}",
                 url='https://pikeman-twa-c69da4fa6518.herokuapp.com/'
             ))
-            await self.client.disconnect()
             auth_url = web_view.url
+            await self.client.disconnect()
             await self.session.get(auth_url)
-            logger.success(f"Thread {self.thread} | {self.account} | Auth url: {auth_url}")
             return urllib.parse.unquote(auth_url.split('tgWebAppData=')[1].split('&tgWebAppVersion')[0])
         except Exception as e:
             return None

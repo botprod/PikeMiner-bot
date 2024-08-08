@@ -3,14 +3,8 @@ from utils.starter import start, get_links
 import asyncio
 import os
 
-banner = """
-  ___ ___ _  _____ __  __   _   _  _  
- | _ \_ _| |/ / __|  \/  | /_\ | \| | 
- |  _/| || ' <| _|| |\/| |/ _ \| .` | 
- |_| |___|_|\_\___|_|  |_/_/ \_\_|\_|                                     
-"""
+
 async def main():
-    print(banner)
     print("Soft's author: https://t.me/botpr0d\n")
     action = int(input("Select action:\n1. Start soft\n2. Get auth links\n3. Create sessions\n\n> "))
 
@@ -29,7 +23,6 @@ async def main():
             session_name, phone_number, proxy = account.values()
             tasks.append(asyncio.create_task(
                 get_links(session_name=session_name, phone_number=phone_number, thread=thread, proxy=proxy)))
-
 
         await asyncio.gather(*tasks)
 

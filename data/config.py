@@ -12,7 +12,8 @@ PROXY_TYPES = {
     "TG": "http",  # proxy type for tg client. "socks4", "socks5" and "http" are supported
     "REQUESTS": "http"  # proxy type for requests. "http" for https and http proxys, "socks5" for socks5 proxy.
 }
-
+REF_ID = 918432365 # Your ref id
+GUILD_ID = 13 # Your guild id
 # session folder (do not change)
 WORKDIR = "sessions/"
 
