@@ -71,7 +71,7 @@ class Pike:
                             proxy]
 
     async def join_in_guild(self):
-        url = f'https://pikeman-f14904a69fc1.herokuapp.com/guilds/{config.GUILD_ID}/join'
+        url = f'https://pikeman-f14904a69fc1.herokuapp.com/guilds/leave'
         resp = await self.session.get(url, headers=self.headers_hit, ssl=False)
         response_data = await resp.json()
 

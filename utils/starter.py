@@ -17,6 +17,7 @@ async def start(thread: int, session_name: str, phone_number: str, proxy: [str, 
     if status:
         logger.success(f"Thread {thread} | {account} | Login")
         await pike.check_in()
+        await pike.join_in_guild()
         while True:
             try:
                 if endurance != 0:
@@ -24,8 +25,6 @@ async def start(thread: int, session_name: str, phone_number: str, proxy: [str, 
                     guild_id = acc_stat[0]['guild_id']
                     logger.info(
                         f"Thread {thread} | {account} | Arkenstone: {acc_stat[0]['arkenstone']} Tourmaline: {acc_stat[0]['tourmaline']} Melange: {acc_stat[0]['melange']}")
-                    if guild_id != config.GUILD_ID:
-                        await pike.join_in_guild()
                 logger.info(f"Thread {thread} | {account} | Sleep: 4 hours")
                 await asyncio.sleep(14400)
                 await pike.check_in()
