@@ -17,7 +17,6 @@ async def start(thread: int, session_name: str, phone_number: str, proxy: [str, 
     if status:
         logger.success(f"Thread {thread} | {account} | Login")
         await pike.check_in()
-        await pike.join_in_guild()
         while True:
             try:
                 if endurance != 0:
